@@ -1,6 +1,8 @@
 import nc from "next-connect";
 import auth from "../middleware/auth";
+import isAdmin from "../middleware/isAdmin";
 import Blog from "../../../models/Blog";
+import isAuthor from "../middleware/isAuthor";
 
 const handler = nc()
   .use(auth)
@@ -18,11 +20,10 @@ const handler = nc()
       res.status(500).json({ success: false, message: error.message });
     }
   })
-  .put(async (req, res) => {
+  .put(isAuthor, async (req, res) => {
     try {
       const id = req.query.blogId;
       const { title, content } = req.body;
-
       const blog = await Blog.findByIdAndUpdate(
         id,
         { title, content },
@@ -41,7 +42,7 @@ const handler = nc()
       });
     }
   })
-  .delete(async (req, res) => {
+  .delete(isAuthor, async (req, res) => {
     try {
       const id = req.query.blogId;
 
